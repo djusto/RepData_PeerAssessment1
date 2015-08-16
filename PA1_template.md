@@ -24,7 +24,8 @@ After downloading the data from the website, set the work directory to this file
     library(knitr)
 
 then load and process the data into a format suitable for your analysis
-```{r}
+
+```r
 T <- read.csv('activity.csv')
 ```
 
@@ -34,7 +35,8 @@ T <- read.csv('activity.csv')
 Ignoring the missing values in the dataset, calculate the total number of steps taken per day
 
 
-```{r}
+
+```r
 Tna <- na.exclude(T)
 B   <- aggregate( Tna$steps, by=list(date=Tna$date), sum)
 colnames(B)[2] <- 'totalSteps'
@@ -42,18 +44,31 @@ colnames(B)[2] <- 'totalSteps'
 
 *     Make a histogram of the total number of steps taken each day
 
-```{r}
+
+```r
 hist(B$totalSteps,breaks=12)
 ```
 
+![plot of chunk unnamed-chunk-3](figure/unnamed-chunk-3-1.png) 
+
 *    The mean of the total number of steps taken per day is
-```{r}
+
+```r
 mean(B$totalSteps)
 ```
 
+```
+## [1] 10766.19
+```
+
 *    and the median is
-```{r}
+
+```r
 median(B$totalSteps)
+```
+
+```
+## [1] 10765
 ```
 
 
@@ -66,19 +81,32 @@ median(B$totalSteps)
 ## What is the average daily activity pattern?
 
 *    Make a time series plot (i.e. type = "l") of the 5-minute interval (x-axis) and the average number of steps taken, averaged across all days (y-axis)
-```{r}
+
+```r
 B   <- aggregate( Tna$steps, by=list(interval=Tna$interval), mean)
 colnames(B)[2] <- 'meanSteps'
 plot(B$interval,B$meanSteps,type='l')
 ```
 
+![plot of chunk unnamed-chunk-6](figure/unnamed-chunk-6-1.png) 
+
 *   On average across all the days in the dataset, the maximum number of steps is
-```{r}
+
+```r
 max(B$meanSteps)
 ```
+
+```
+## [1] 206.1698
+```
 and it happens at the interval
-```{r}
+
+```r
 B[which.max(B$meanSteps),1]
+```
+
+```
+## [1] 835
 ```
 
 
@@ -91,12 +119,22 @@ Note that there are a number of days/intervals where there are missing values (c
 
 *    The total number of missing values in the dataset (i.e. the total number of rows with NAs) is
 
-```{r}
+
+```r
 sum( is.na(T$steps) )
 ```
+
+```
+## [1] 2304
+```
 which corresponds to the percentage 
-```{r}
+
+```r
 sum( is.na(T$steps) )/nrow(T) * 100
+```
+
+```
+## [1] 13.11475
 ```
 
 
@@ -104,13 +142,15 @@ sum( is.na(T$steps) )/nrow(T) * 100
 
 
 *    Devise a strategy for filling in all of the missing values in the dataset. The strategy does not need to be  sophisticated. For example, you could use the mean/median for that day, or the mean for that 5-minute interval, etc.
-```{r}
+
+```r
 iT<-is.na(T$steps)      # index of NA in table T
 iB=match(T[iT,3],B[,1]) # index in B that match interval
 ```
 
 *   Create a new dataset that is equal to the original dataset but with the missing data filled in.
-```{r}
+
+```r
 N<-T              # new dataset
 N[iT,1]=B[iB,2]   # updates steps with mean for that 5 minute interval 
 ```
@@ -118,24 +158,39 @@ N[iT,1]=B[iB,2]   # updates steps with mean for that 5 minute interval
 
 *   Make a histogram of the total number of steps taken each day and Calculate and report the mean and median total  number of steps taken per day. Do these values differ from the estimates from the first part of the assignment? What is the impact of imputing missing data on the estimates of the total daily number of steps?
 
-```{r}
+
+```r
 Bn   <- aggregate( N$steps, by=list(date=N$date), sum)
 colnames(Bn)[2] <- 'totalSteps'
 ```
 
 *     Make a histogram of the total number of steps taken each day
 
-```{r}
+
+```r
 hist(Bn$totalSteps,breaks=12)
 ```
 
+![plot of chunk unnamed-chunk-14](figure/unnamed-chunk-14-1.png) 
+
 *    The mean and the median for the new data are
-```{r}
+
+```r
 mean(Bn$totalSteps)
+```
+
+```
+## [1] 10766.19
+```
+
+```r
 median(Bn$totalSteps)
 ```
 
-Our strategy to fill in the NA values did not change the mean and increase just a lit bit the median making it equals to the mean.
+```
+## [1] 10766.19
+```
+
 
 
 ## Are there differences in activity patterns between weekdays and weekends?
