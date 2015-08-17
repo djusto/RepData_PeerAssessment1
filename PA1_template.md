@@ -191,6 +191,7 @@ median(Bn$totalSteps)
 ## [1] 10766.19
 ```
 
+Our strategy to fill in the NA values did not change the mean and increase just a lit bit the median making it equals to the mean.
 
 
 ## Are there differences in activity patterns between weekdays and weekends?
@@ -199,4 +200,25 @@ For this part the weekdays() function may be of some help here. Use the dataset 
 
 *    Create a new factor variable in the dataset with two levels – “weekday” and “weekend” indicating whether a given  date is a weekday or weekend day.
 
-*    Make a panel plot containing a time series plot (i.e. type = "l") of the 5-minute interval (x-axis) and the average  number of steps taken, averaged across all weekday days or weekend days (y-axis). See the README file in the GitHub repository to see an example of what this plot should look like using simulated data.
+```r
+WD<-weekdays(as.POSIXct(N$date,'%Y-%M-%D'))
+N$weekend<-(WD=='Saturday')|(WD=='Sunday')
+```
+
+*    Make a panel plot containing a time series plot (i.e. type = "l") of the 5-minute interval (x-axis) and the average  number of steps taken, averaged across all weekday days or weekend days (y-axis). 
+
+```r
+library(lattice)
+NN <- transform(N, weekend =factor(weekend))
+
+NT <- subset( N,N$weekend==TRUE)
+NF <- subset( N,N$weekend==FALSE)
+BT <- aggregate( NT$steps,by=list(interval=NT$interval),mean)
+BF <- aggregate( NF$steps,by=list(interval=NF$interval),mean)
+B <- rbind(BT,BF)
+B[1:288,3]='weekend'
+B[289:576,3]='weekday'
+xyplot( B$x ~ B$interval | B$V3 ,type= 'l')
+```
+
+![plot of chunk unnamed-chunk-17](figure/unnamed-chunk-17-1.png) 
